@@ -19,6 +19,7 @@ import click
 from tidecli.api.routes import (
     get_ide_courses,
     get_tasks_by_doc,
+    get_tasks_by_course,
     get_task_by_ide_task_id,
     submit_task,
 )
@@ -165,10 +166,12 @@ def list_tasks(demo_path: str, jsondata: bool) -> None:
 @click.option("--all", "-a", "all_tasks", is_flag=True, default=False)
 @click.option("--force", "-f", "force", is_flag=True, default=False)
 @click.option("--dir", "-d", "user_dir", type=str, default=None)
+@click.option("--course", "-c", "by_course", is_flag=True, default=False)
 @click.argument("demo_path", type=str)
 @click.argument("ide_task_id", type=str, default=None, required=False)
+@click.argument("course_id", type=str, default=None, required=False)
 def create(
-    demo_path: str, ide_task_id: str, all_tasks: bool, force: bool, user_dir: str
+    demo_path: str, ide_task_id: str, all_tasks: bool, force: bool, user_dir: str, by_course: bool, course_id: str
 ) -> None:
     """Create tasks based on options."""
     if not is_logged_in():
@@ -177,6 +180,11 @@ def create(
     if all_tasks:
         # Create all tasks
         tasks: List[TaskData] = get_tasks_by_doc(doc_path=demo_path)
+        create_tasks(tasks=tasks, overwrite=force, user_path=user_dir)
+
+    elif by_course:
+        # Create tasks by course
+        tasks: List[TaskData] = get_tasks_by_course(doc_id=course_id, doc_path=demo_path)
         create_tasks(tasks=tasks, overwrite=force, user_path=user_dir)
 
     elif ide_task_id:
