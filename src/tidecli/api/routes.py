@@ -25,6 +25,7 @@ from tidecli.tide_config import (
     TASK_BY_IDE_TASK_ID_ENDPOINT,
     SUBMIT_TASK_ENDPOINT,
     TASKS_BY_DOC_ENDPOINT,
+    TASKS_BY_COURSE_ENDPOINT,
 )
 from tidecli.utils.handle_token import get_signed_in_user
 
@@ -177,6 +178,25 @@ def get_task_by_ide_task_id(
     )
 
     return TaskData(**res)
+
+
+def get_tasks_by_course(doc_id: int, doc_path: str) -> list[TaskData]:
+    """
+    Get all tasks from a single course by document id or document path
+    
+    :param doc_path: Tasks document path
+    return: JSON response of tasks
+    """
+    doc_id = None  # Tim requires doc_id to be None if not used
+
+    res = tim_request(
+        endpoint=TASKS_BY_COURSE_ENDPOINT,
+        params={"doc_path": doc_path, "doc_id": doc_id},
+    )
+
+    tasks = [TaskData(**task) for task in res]
+
+    return tasks
 
 
 def submit_task(
