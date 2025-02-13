@@ -194,6 +194,9 @@ def get_tasks_by_course(doc_id: int, doc_path: str) -> list[TaskData]:
         params={"doc_path": doc_path, "doc_id": doc_id},
     )
 
+    while isinstance(res, list) and len(res) == 1 and isinstance(res[0], list):
+        res = res[0]
+
     tasks = [TaskData(**task) for task in res]
 
     return tasks
