@@ -195,14 +195,10 @@ def get_tasks_by_course(doc_id: int, doc_path: str) -> list[TaskData]:
         params={"doc_path": doc_path, "doc_id": doc_id},
     )
 
-    #while isinstance(res, list) and len(res) == 1 and isinstance(res[0], list):
-        #res = res[0]
-    
-    flat_data = list(chain.from_iterable(chain.from_iterable(res)))
+    nested_res = [list(chain.from_iterable(x)) for x in res]
+    task_sets = [[TaskData(**task) for task in task_list] for task_list in nested_res]
 
-    tasks = [TaskData(**task) for task in flat_data]
-
-    return tasks
+    return task_sets
 
 
 def submit_task(

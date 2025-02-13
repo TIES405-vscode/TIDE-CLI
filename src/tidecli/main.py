@@ -193,7 +193,8 @@ def create(
         tasks: List[TaskData] = get_tasks_by_course(
             doc_id=course_id, doc_path=demo_path
         )
-        create_tasks(tasks=tasks, overwrite=force, user_path=user_dir)
+        for taskSet in tasks:
+            create_tasks(tasks=taskSet, overwrite=force, user_path=user_dir)
 
     elif ide_task_id:
         # Create a single task
@@ -203,7 +204,7 @@ def create(
         create_task(task=task_data, overwrite=force, user_path=user_dir)
 
     else:
-        click.echo("Please provide either --all or an ide_task_id.")
+        click.echo("Please provide either --all or an ide_task_id.") #TODO: update this message
 
 
 @task.command()
