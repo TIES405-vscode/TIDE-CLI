@@ -105,6 +105,9 @@ class TaskData(BaseModel):
     header: str | None = None
     """Header of the task."""
 
+    max_points: float | None = None
+    """Maximum points for the task"""
+
     def get_default_task_directory(self) -> Path:
         """Return default task directory."""
         return Path(Path(self.path).name) / self.ide_task_id

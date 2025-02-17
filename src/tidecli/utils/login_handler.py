@@ -32,9 +32,9 @@ def is_logged_in(
         try:
             token_validity_time = validate_token()
         except click.ClickException as e:
-            delete_token()
             if print_errors:
                 click.echo(f"Error: {e}\nPlease, login.")
+            delete_token()
             return False
 
         # If the token is not expired then return the token validity time
@@ -62,7 +62,8 @@ def is_logged_in(
 
 
 def login(jsondata: bool = False):
-    click.echo(f"Logging in...\nPlease, finish authenticating in the browser.")
+    if not jsondata:
+        click.echo(f"Logging in...\nPlease, finish authenticating in the browser.")
     if authenticate():
         if jsondata:
             return {"login_success": True}

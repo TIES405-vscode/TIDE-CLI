@@ -47,3 +47,16 @@ class TimFeedback(BaseModel):
             return f"{saved_new} No console feedback from TIM."
 
         return f" {saved_new}\n\nFeedback from TIM: {self.web.console}"
+
+
+class PointsData(BaseModel):
+    """Model for task points information."""
+
+    current_points: float | None
+    """Current points awarded for answering the task"""
+
+    def pretty_print(self) -> str:
+        """
+        :return: Points data in a human-readable format
+        """
+        return f"Current points: {self.current_points}"

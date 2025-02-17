@@ -10,14 +10,17 @@ __license__ = "MIT"
 __date__ = "10.12.2024"
 
 import json
+from os import name
 from pathlib import Path
 from typing import List
+from tidecli.models.tim_feedback import PointsData
 from tidecli.utils import login_handler
 from tidecli.utils.error_logger import Logger
 import click
 
 from tidecli.api.routes import (
     get_ide_courses,
+    get_task_points,
     get_tasks_by_doc,
     get_tasks_by_course,
     get_task_by_ide_task_id,
@@ -80,9 +83,8 @@ def login(jsondata: bool) -> None:
 
     Functionality: Opens a browser window for the user to log in.
     """
-    if is_logged_in(print_errors=False, print_token_info=True):
+    if is_logged_in(print_errors=True, print_token_info=True):
         return
-
     if jsondata:
         click.echo(
             json.dumps(login_handler.login(jsondata=True), ensure_ascii=False, indent=4)
@@ -160,6 +162,18 @@ def list_tasks(demo_path: str, jsondata: bool) -> None:
         # TODO: the json printed contains a ton of unnecessary information
         tasks_json = [t.to_json() for t in tasks]
         click.echo(json.dumps(tasks_json, ensure_ascii=False, indent=4))
+
+
+@task.command(name="points")
+@click.option("--json", "-j", "print_json", is_flag=True, default=False)
+@click.argument("doc_path", type=str, required=True)
+@click.argument("ide_task_id", type=str, required=True)
+def points(doc_path: str, ide_task_id: str, print_json: bool):
+    points: PointsData = get_task_points(ide_task_id, doc_path)
+    if print_json:
+        click.echo(points.model_dump_json())
+    else:
+        click.echo(points.pretty_print())
 
 
 @task.command()

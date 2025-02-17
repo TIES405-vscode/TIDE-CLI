@@ -17,7 +17,7 @@ from urllib.parse import urljoin
 from tidecli.models.course import Course
 from tidecli.models.submit_data import SubmitData
 from tidecli.models.task_data import TaskData
-from tidecli.models.tim_feedback import TimFeedback
+from tidecli.models.tim_feedback import PointsData, TimFeedback
 from tidecli.tide_config import (
     TIM_URL,
     INTROSPECT_ENDPOINT,
@@ -25,9 +25,11 @@ from tidecli.tide_config import (
     IDE_COURSES_ENDPOINT,
     TASK_BY_IDE_TASK_ID_ENDPOINT,
     SUBMIT_TASK_ENDPOINT,
+    TASK_POINTS_ENDPOINT,
     TASKS_BY_DOC_ENDPOINT,
     TASKS_BY_COURSE_ENDPOINT,
 )
+from tidecli.utils.error_logger import Logger
 from tidecli.utils.handle_token import get_signed_in_user
 
 
@@ -220,3 +222,12 @@ def submit_task(
         raise click.ClickException("No feedback received")
 
     return TimFeedback(**feedback)
+
+
+def get_task_points(ide_task_id: str, doc_path: str) -> PointsData:
+    res = tim_request(
+        endpoint=TASK_POINTS_ENDPOINT,
+        method="GET",
+        params={"ide_task_id": ide_task_id, "doc_path": doc_path},
+    )
+    return PointsData(**res)

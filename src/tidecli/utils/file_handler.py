@@ -179,7 +179,7 @@ def save_task_file(
         with open(file_path, "wb") as file:
             file.write(content)
             file.close()
-    
+
     relative_path = relpath(save_path, Path.cwd())
     click.echo(f"Wrote file {relative_path}: {task_file.file_name}")
 
@@ -501,6 +501,7 @@ def find_gaps_in_tasks(lines: list[str]) -> tuple[int, int] | None:
     return gap
 
 
+# TODO: a function for adding removed gap markers
 def answer_with_original_noneditable_sections(answer: str, original: str) -> str:
     """
     Combine answer with original file, keeping non-editable sections from original.
