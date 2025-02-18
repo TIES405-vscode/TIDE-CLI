@@ -96,6 +96,7 @@ def combine_tasks(tasks: list[TaskData]) -> list[TaskData]:
                 ],
                 stem=task_list[0].stem,
                 header=task_list[0].header,
+                max_points=task_list[0].max_points,
             )
         )
 
