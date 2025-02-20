@@ -210,8 +210,6 @@ def create_course(course_path: str, course_id: int, force: bool, user_dir: str) 
     :force: If True, overwrites existing task files
     :user_dir: Path to user defined task folder
     """
-    click.echo(course_id)
-    click.echo(course_path)
 
     if not is_logged_in():
         raise click.UsageError("Could not create tasks: User is not logged in")
