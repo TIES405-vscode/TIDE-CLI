@@ -186,11 +186,10 @@ def get_task_by_ide_task_id(
 def get_tasks_by_course(doc_id: int, doc_path: str) -> list[TaskData]:
     """
     Get all tasks from a single course by document id or document path
-    
+
     :param doc_path: Tasks document path
     return: JSON response of tasks
     """
-    doc_id = None  # Tim requires doc_id to be None if not used
 
     res = tim_request(
         endpoint=TASKS_BY_COURSE_ENDPOINT,
