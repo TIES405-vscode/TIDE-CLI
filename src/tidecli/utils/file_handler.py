@@ -11,6 +11,7 @@ from typing import Any
 import click.exceptions
 from pathlib import Path
 import itertools
+from os.path import relpath
 
 from tidecli.models.task_data import (
     SupplementaryFile,
@@ -96,6 +97,7 @@ def combine_tasks(tasks: list[TaskData]) -> list[TaskData]:
                 ],
                 stem=task_list[0].stem,
                 header=task_list[0].header,
+                max_points=task_list[0].max_points,
             )
         )
 
@@ -178,7 +180,9 @@ def save_task_file(
         with open(file_path, "wb") as file:
             file.write(content)
             file.close()
-    click.echo(f"Wrote file {save_path.relative_to(Path.cwd())}: {task_file.file_name}")
+
+    relative_path = relpath(save_path, Path.cwd())
+    click.echo(f"Wrote file {relative_path}: {task_file.file_name}")
 
 
 def save_task_files(task: TaskData, save_path: Path, overwrite: bool = False) -> bool:
@@ -501,6 +505,7 @@ def find_gaps_in_tasks(lines: list[str]) -> tuple[int, int] | None:
     return gap
 
 
+# TODO: a function for adding removed gap markers
 def answer_with_original_noneditable_sections(answer: str, original: str) -> str:
     """
     Combine answer with original file, keeping non-editable sections from original.

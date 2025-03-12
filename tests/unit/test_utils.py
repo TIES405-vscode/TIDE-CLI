@@ -3,7 +3,7 @@
 import os
 import shutil
 import unittest
-import tests.test_data as testdata
+import unit.test_data as testdata
 from pathlib import Path
 from tidecli.utils import file_handler
 
@@ -144,7 +144,7 @@ validated_task_data = {
 }
 
 # Creating the test files to user home dir
-user_home = os.environ["HOME"]
+user_home = os.getenv("HOME") or os.getenv("USERPROFILE")
 test_path = os.path.join(user_home, "Desktop", "Ohjelmointikurssi 1/Demo1/Tehtävä 1")
 
 # TODO: Following tests needs to be updated for current version of application

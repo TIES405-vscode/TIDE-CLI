@@ -108,6 +108,244 @@ get_task_by_ide_task_id_test_response = {
     "ide_task_id": "t3",
 }
 
+get_tasks_by_course_test_response = [
+    [
+        [
+            {
+                "task_files": [
+                    {
+                        "task_id_ext": "75.CSharpHelloWorld.glG1Cy5mfAiQ",
+                        "content": 'public class HelloWorld\n{\n    public static void Main()\n    {\n// --- Write your code below this line. ---\n        System.Console.WriteLine("Hello World");\n// --- Write your code above this line. ---\n    }\n}\n',
+                        "file_name": "hello.cs",
+                        "task_directory": None,
+                        "task_type": "cs",
+                        "user_input": "",
+                        "user_args": "",
+                    }
+                ],
+                "supplementary_files": [
+                    {
+                        "content": '<Project Sdk="Microsoft.NET.Sdk">\n  <PropertyGroup>\n    <OutputType>Exe</OutputType>\n    <TargetFramework>net$(NETCoreAppMaximumVersion)</TargetFramework>\n  </PropertyGroup>\n</Project>\n',
+                        "file_name": "t1.csproj",
+                        "source": None,
+                        "task_directory": None,
+                    }
+                ],
+                "path": "kurssit/tie/ohj2/2025k/demot/demo1",
+                "task_directory": None,
+                "task_type": None,
+                "header": None,
+                "stem": None,
+                "max_points": 2,
+                "type": "cs",
+                "task_id": "CSharpHelloWorld",
+                "doc_id": 75,
+                "par_id": "glG1Cy5mfAiQ",
+                "ide_task_id": "t1",
+            },
+            {
+                "task_files": [
+                    {
+                        "task_id_ext": "75.PythonHelloWorld.zDLesD5M3Qqg",
+                        "content": 'print("kissa istuu")\n# --- Write your code below this line. ---\nprint("koira haukkuu")\n# --- Write your code above this line. ---\nprint("hevonen nauraa")\n',
+                        "file_name": "animals.py",
+                        "task_directory": None,
+                        "task_type": "py",
+                        "user_input": "",
+                        "user_args": "",
+                    }
+                ],
+                "supplementary_files": [
+                    {
+                        "content": "istuu\nja\nnaukuu\n",
+                        "file_name": "kissa.txt",
+                        "source": None,
+                        "task_directory": None,
+                    },
+                    {
+                        "content": "seisoo ja haukkuu",
+                        "file_name": "koira.dat",
+                        "source": None,
+                        "task_directory": None,
+                    },
+                ],
+                "path": "kurssit/tie/ohj2/2025k/demot/demo1",
+                "task_directory": None,
+                "task_type": None,
+                "header": None,
+                "stem": None,
+                "max_points": None,
+                "type": "py",
+                "task_id": "PythonHelloWorld",
+                "doc_id": 75,
+                "par_id": "zDLesD5M3Qqg",
+                "ide_task_id": "t2",
+            },
+            {
+                "task_files": [
+                    {
+                        "task_id_ext": "75.CSharpHelloWorld2.0FimvtLFFJYM",
+                        "content": 'public class HelloWorld\n{\n    public static void Main()\n    {\n// --- Write your code below this line. ---\n        System.Console.WriteLine("Hello World");\n// --- Write your code above this line. ---\n    }\n}',
+                        "file_name": "hello.cs",
+                        "task_directory": None,
+                        "task_type": "csharp",
+                        "user_input": "",
+                        "user_args": "",
+                    }
+                ],
+                "supplementary_files": [
+                    {
+                        "content": '<Project Sdk="Microsoft.NET.Sdk">\n  <PropertyGroup>\n    <OutputType>Exe</OutputType>\n    <TargetFramework>net$(NETCoreAppMaximumVersion)</TargetFramework>\n  </PropertyGroup>\n</Project>\n',
+                        "file_name": "t3.csproj",
+                        "source": None,
+                        "task_directory": None,
+                    }
+                ],
+                "path": "kurssit/tie/ohj2/2025k/demot/demo1",
+                "task_directory": None,
+                "task_type": None,
+                "header": None,
+                "stem": None,
+                "max_points": None,
+                "type": "csharp",
+                "task_id": "CSharpHelloWorld2",
+                "doc_id": 75,
+                "par_id": "0FimvtLFFJYM",
+                "ide_task_id": "t3",
+            },
+        ]
+    ],
+    [
+        [
+            {
+                "task_files": [
+                    {
+                        "task_id_ext": "76.CSharpHelloWorld.KVncYJwq6GpS",
+                        "content": 'public class HelloWorld\n{\n    public static void Main()\n    {\n// --- Write your code below this line. ---\n        System.Console.WriteLine("Hello World");\n// --- Write your code above this line. ---\n    }\n}',
+                        "file_name": "hello.cs",
+                        "task_directory": None,
+                        "task_type": "cs",
+                        "user_input": "",
+                        "user_args": "",
+                    }
+                ],
+                "supplementary_files": [
+                    {
+                        "content": '<Project Sdk="Microsoft.NET.Sdk">\n  <PropertyGroup>\n    <OutputType>Exe</OutputType>\n    <TargetFramework>net$(NETCoreAppMaximumVersion)</TargetFramework>\n  </PropertyGroup>\n</Project>\n',
+                        "file_name": "33232123.csproj",
+                        "source": None,
+                        "task_directory": None,
+                    }
+                ],
+                "path": "kurssit/tie/ohj2/2025k/demot/demo2",
+                "task_directory": None,
+                "task_type": None,
+                "header": None,
+                "stem": None,
+                "max_points": None,
+                "type": "cs",
+                "task_id": "CSharpHelloWorld",
+                "doc_id": 76,
+                "par_id": "KVncYJwq6GpS",
+                "ide_task_id": "33232123",
+            }
+        ]
+    ],
+    [
+        [
+            {
+                "task_files": [
+                    {
+                        "task_id_ext": "77.CSharpHelloWorld.glG1Cy5mfAiQ",
+                        "content": 'public class HelloWorld\n{\n    public static void Main()\n    {\n// --- Write your code below this line. ---\n        System.Console.WriteLine("Hei maailma");\n// --- Write your code above this line. ---\n    }\n}',
+                        "file_name": "hello.cs",
+                        "task_directory": None,
+                        "task_type": "cs",
+                        "user_input": "",
+                        "user_args": "",
+                    }
+                ],
+                "supplementary_files": [
+                    {
+                        "content": '<Project Sdk="Microsoft.NET.Sdk">\n  <PropertyGroup>\n    <OutputType>Exe</OutputType>\n    <TargetFramework>net$(NETCoreAppMaximumVersion)</TargetFramework>\n  </PropertyGroup>\n</Project>\n',
+                        "file_name": "t1.csproj",
+                        "source": None,
+                        "task_directory": None,
+                    }
+                ],
+                "path": "kurssit/tie/ohj2/2025k/demot/demo3",
+                "task_directory": None,
+                "task_type": None,
+                "header": None,
+                "stem": None,
+                "max_points": None,
+                "type": "cs",
+                "task_id": "CSharpHelloWorld",
+                "doc_id": 77,
+                "par_id": "glG1Cy5mfAiQ",
+                "ide_task_id": "t1",
+            },
+            {
+                "task_files": [
+                    {
+                        "task_id_ext": "77.PythonHelloWorld.zDLesD5M3Qqg",
+                        "content": 'print("marsu maiskuttaa")\n',
+                        "file_name": "hello.py",
+                        "task_directory": None,
+                        "task_type": "py",
+                        "user_input": "",
+                        "user_args": "",
+                    }
+                ],
+                "supplementary_files": [],
+                "path": "kurssit/tie/ohj2/2025k/demot/demo3",
+                "task_directory": None,
+                "task_type": None,
+                "header": None,
+                "stem": None,
+                "max_points": None,
+                "type": "py",
+                "task_id": "PythonHelloWorld",
+                "doc_id": 77,
+                "par_id": "zDLesD5M3Qqg",
+                "ide_task_id": "t2",
+            },
+            {
+                "task_files": [
+                    {
+                        "task_id_ext": "77.CSharpLaskuri.cKYZhd0vQk7t",
+                        "content": 'public class Counter\n{\n    public static void Main()\n    {\n// --- Write your code below this line. ---\n        System.Console.WriteLine("2 + 2 = 5");\n// --- Write your code above this line. ---\n    }\n}',
+                        "file_name": "laskuri.cs",
+                        "task_directory": None,
+                        "task_type": "cs",
+                        "user_input": "",
+                        "user_args": "",
+                    }
+                ],
+                "supplementary_files": [
+                    {
+                        "content": '<Project Sdk="Microsoft.NET.Sdk">\n  <PropertyGroup>\n    <OutputType>Exe</OutputType>\n    <TargetFramework>net$(NETCoreAppMaximumVersion)</TargetFramework>\n  </PropertyGroup>\n</Project>\n',
+                        "file_name": "t4.csproj",
+                        "source": None,
+                        "task_directory": None,
+                    }
+                ],
+                "path": "kurssit/tie/ohj2/2025k/demot/demo3",
+                "task_directory": None,
+                "task_type": None,
+                "header": None,
+                "stem": None,
+                "max_points": None,
+                "type": "cs",
+                "task_id": "CSharpLaskuri",
+                "doc_id": 77,
+                "par_id": "cKYZhd0vQk7t",
+                "ide_task_id": "t4",
+            },
+        ]
+    ],
+]
+
 submit_task_by_id_test_submit = {
     "code_files": [
         {

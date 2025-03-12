@@ -10,15 +10,19 @@ __license__ = "MIT"
 __date__ = "10.12.2024"
 
 import json
+from os import name
 from pathlib import Path
 from typing import List
+from tidecli.models.tim_feedback import PointsData
 from tidecli.utils import login_handler
 from tidecli.utils.error_logger import Logger
 import click
 
 from tidecli.api.routes import (
     get_ide_courses,
+    get_task_points,
     get_tasks_by_doc,
+    get_tasks_by_course,
     get_task_by_ide_task_id,
     submit_task,
 )
@@ -79,9 +83,8 @@ def login(jsondata: bool) -> None:
 
     Functionality: Opens a browser window for the user to log in.
     """
-    if is_logged_in(print_errors=False, print_token_info=True):
+    if is_logged_in(print_errors=True, print_token_info=True):
         return
-
     if jsondata:
         click.echo(
             json.dumps(login_handler.login(jsondata=True), ensure_ascii=False, indent=4)
@@ -161,6 +164,67 @@ def list_tasks(demo_path: str, jsondata: bool) -> None:
         click.echo(json.dumps(tasks_json, ensure_ascii=False, indent=4))
 
 
+@task.command(name="points")
+@click.option("--json", "-j", "print_json", is_flag=True, default=False)
+@click.argument("doc_path", type=str, required=True)
+@click.argument("ide_task_id", type=str, required=True)
+def points(doc_path: str, ide_task_id: str, print_json: bool):
+    points: PointsData = get_task_points(ide_task_id, doc_path)
+    if print_json:
+        click.echo(points.model_dump_json())
+    else:
+        click.echo(points.pretty_print())
+
+
+@task.command(name="create-course")
+@click.option(
+    "--force",
+    "-f",
+    "force",
+    is_flag=True,
+    default=False,
+    help="Overwrite existing files",
+)
+@click.option(
+    "--dir",
+    "-d",
+    "user_dir",
+    is_flag=False,
+    type=str,
+    default=None,
+    help="Path to a user defined folder for created tasks",
+)
+@click.option("--path", "-p", "course_path", type=str, default=None, required=False)
+@click.option("--id", "-i", "course_id", type=int, default=None, required=False)
+def create_course(course_path: str, course_id: int, force: bool, user_dir: str) -> None:
+    """
+    Create all ide tasks from a course.
+
+    Fetches and creates all ide tasks for a given course, by course document id or document path.
+    Course path and ID refer to the document where the paths to ide tasks are defined.
+
+    Providing either COURSE_PATH or COURSE_ID is required.
+
+    :param course_path: Path to the course document
+    :param course_id: ID for the course document
+    :force: If True, overwrites existing task files
+    :user_dir: Path to user defined task folder
+    """
+
+    if not is_logged_in():
+        raise click.UsageError("Could not create tasks: User is not logged in")
+    elif course_path or course_id:
+        tasks: List[TaskData] = get_tasks_by_course(
+            doc_id=course_id, doc_path=course_path
+        )
+        for taskSet in tasks:
+            create_tasks(tasks=taskSet, overwrite=force, user_path=user_dir)
+    else:
+        raise click.UsageError(
+            "Please provide either course path or course document ID."
+        )
+
+
 @task.command()
 @click.option("--all", "-a", "all_tasks", is_flag=True, default=False)
 @click.option("--force", "-f", "force", is_flag=True, default=False)
@@ -168,7 +232,11 @@ def list_tasks(demo_path: str, jsondata: bool) -> None:
 @click.argument("demo_path", type=str)
 @click.argument("ide_task_id", type=str, default=None, required=False)
 def create(
-    demo_path: str, ide_task_id: str, all_tasks: bool, force: bool, user_dir: str
+    demo_path: str,
+    ide_task_id: str,
+    all_tasks: bool,
+    force: bool,
+    user_dir: str,
 ) -> None:
     """Create tasks based on options."""
     if not is_logged_in():
@@ -187,7 +255,9 @@ def create(
         create_task(task=task_data, overwrite=force, user_path=user_dir)
 
     else:
-        click.echo("Please provide either --all or an ide_task_id.")
+        click.echo(
+            "Please provide either --all or an ide_task_id."
+        )  # TODO: update this message
 
 
 @task.command()

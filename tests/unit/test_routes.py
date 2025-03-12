@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 
 import click
 
-from tests.test_data import (
+from unit.test_data import (
     validate_token_response,
     get_profile_test_response,
     get_ide_courses_test_response,
