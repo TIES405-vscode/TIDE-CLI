@@ -218,7 +218,9 @@ def create(
         create_task(task=task_data, overwrite=force, user_path=user_dir)
 
     else:
-        click.echo("Please provide either --all or an ide_task_id.") #TODO: update this message
+        click.echo(
+            "Please provide either --all or an ide_task_id."
+        )  # TODO: update this message
 
 
 @task.command()
