@@ -2,7 +2,11 @@ import os
 
 # Configuration for the TIM /oauth
 CLIENT_ID = "oauth2_tide"
-TIM_URL = "http://localhost" if os.getenv("DEV") else "https://tim.jyu.fi"
+# Use DEV for localhost development address
+# For the tim url, use default https://tim.jyu.fi if the user does not supply custom url
+TIM_URL = (
+    "http://localhost" if os.getenv("DEV") else os.getenv("URL", "https://tim.jyu.fi")
+)
 AUTH_ENDPOINT = "/oauth/authorize"
 TOKEN_ENDPOINT = "/oauth/token"
 PORT = 8083
