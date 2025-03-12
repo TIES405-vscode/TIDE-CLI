@@ -11,6 +11,7 @@ from typing import Any
 import click.exceptions
 from pathlib import Path
 import itertools
+from os.path import relpath
 
 from tidecli.models.task_data import (
     SupplementaryFile,
@@ -179,7 +180,9 @@ def save_task_file(
         with open(file_path, "wb") as file:
             file.write(content)
             file.close()
-    click.echo(f"Wrote file {save_path}: {task_file.file_name}")
+
+    relative_path = relpath(save_path, Path.cwd())
+    click.echo(f"Wrote file {relative_path}: {task_file.file_name}")
 
 
 def save_task_files(task: TaskData, save_path: Path, overwrite: bool = False) -> bool:

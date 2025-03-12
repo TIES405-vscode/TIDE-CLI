@@ -11,6 +11,7 @@ __date__ = "11.5.2024"
 from typing import Any
 import click
 import requests
+from itertools import chain
 
 from urllib.parse import urljoin
 from tidecli.models.course import Course
@@ -26,6 +27,7 @@ from tidecli.tide_config import (
     SUBMIT_TASK_ENDPOINT,
     TASK_POINTS_ENDPOINT,
     TASKS_BY_DOC_ENDPOINT,
+    TASKS_BY_COURSE_ENDPOINT,
 )
 from tidecli.utils.error_logger import Logger
 from tidecli.utils.handle_token import get_signed_in_user
@@ -179,6 +181,25 @@ def get_task_by_ide_task_id(
     )
 
     return TaskData(**res)
+
+
+def get_tasks_by_course(doc_id: int, doc_path: str) -> list[TaskData]:
+    """
+    Get all tasks from a single course by document id or document path
+
+    :param doc_path: Tasks document path
+    return: JSON response of tasks
+    """
+
+    res = tim_request(
+        endpoint=TASKS_BY_COURSE_ENDPOINT,
+        params={"doc_path": doc_path, "doc_id": doc_id},
+    )
+
+    nested_res = [list(chain.from_iterable(x)) for x in res]
+    task_sets = [[TaskData(**task) for task in task_list] for task_list in nested_res]
+
+    return task_sets
 
 
 def submit_task(
