@@ -229,7 +229,10 @@ def write_metadata(folder_path: Path, metadata: TaskData) -> None:
         course_part = course_metadata.course_parts.setdefault(
             course_part_name, TideCoursePartData()
         )
-        course_part.tasks.setdefault(taskname, metadata)
+
+        if course_part.tasks.get(taskname, metadata) != metadata:
+            click.echo("Task metadata updated")
+        course_part.tasks[taskname] = metadata
 
         content = course_metadata.model_dump_json(indent=4)
         file.write(content)
