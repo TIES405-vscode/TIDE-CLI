@@ -8,6 +8,10 @@ A command line interface for completing TIM programming exercises
 
 - Python 3.10 or higher
 - [Poetry](https://python-poetry.org/docs/#installation) and [Poetry shell plugin](https://github.com/python-poetry/poetry-plugin-shell) for dependency management, see the links for installation instructions
+- If you run into issues when trying to install Poetry and/or the Poetry shell plugin via the system's own package manager, you can try the following:
+	- install Poetry via `pipx` as per the official Poetry instructions linked above
+	- if you have trouble installing the shell plugin: activate the Poetry virtual environment with `poetry env activate` and continue onto `Step 4` (requires Poetry v2.x)
+
 
 For managing multiple versions of Python see e.g. [pyenv](https://github.com/pyenv/pyenv) (or [pyenv-win](https://github.com/pyenv-win/pyenv-win) for Windows systems)
 
@@ -17,7 +21,7 @@ Step 1: Clone TIDE-CLI repository https://github.com/TIDE-project/TIDE-CLI
 
 Step 2: Modify src/tidecli/tide_config.py BASE_URL to correspond the TIM-server being used
 
-Step 3: Run `poetry shell` to enter virtual environment
+Step 3: Run `poetry shell` to enter virtual environment (or `poetry env activate` if you didn't install the shell plugin). 
 
 Step 4: Run `poetry install` to install dependencies. If Poetry install fails, run first `poetry lock`
 
