@@ -261,7 +261,13 @@ def create(
 
 
 @task.command()
-@click.option("--only-noneditable-sections", "-n", "noneditable_sections", is_flag=True, default=False)
+@click.option(
+    "--only-noneditable-sections",
+    "-n",
+    "noneditable_sections",
+    is_flag=True,
+    default=False,
+)
 @click.argument("file_path_string", type=str, required=True)
 def reset(file_path_string: str, noneditable_sections: bool) -> None:
     """
@@ -296,15 +302,13 @@ def reset(file_path_string: str, noneditable_sections: bool) -> None:
     if task_file_contents is None:
         raise click.ClickException("File is not part of this task")
 
-    file_path.write_text(task_file_contents)
-
     if noneditable_sections:
         combined_contents = answer_with_original_noneditable_sections(
             file_contents, task_file_contents
         )
-        file_path.write_text(combined_contents)  # Kirjoitetaan yhdistetyt sisällöt
+        file_path.write_text(combined_contents)
     else:
-        file_path.write_text(task_file_contents)  # Kirjoitetaan vain tehtävän sisältö
+        file_path.write_text(task_file_contents)
 
 
 @tim_ide.command()
