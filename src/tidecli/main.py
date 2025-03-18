@@ -83,7 +83,7 @@ def login(jsondata: bool) -> None:
 
     Functionality: Opens a browser window for the user to log in.
     """
-    if is_logged_in(print_errors=True, print_token_info=True):
+    if is_logged_in(print_errors=False, print_token_info=True):
         return
     if jsondata:
         click.echo(
