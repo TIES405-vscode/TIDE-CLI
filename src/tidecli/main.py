@@ -262,7 +262,7 @@ def create(
 
 @task.command()
 @click.option(
-    "--only-noneditable-sections",
+    "--non-editable-only",
     "-n",
     "noneditable_sections",
     is_flag=True,
@@ -271,9 +271,10 @@ def create(
 @click.argument("file_path_string", type=str, required=True)
 def reset(file_path_string: str, noneditable_sections: bool) -> None:
     """
-    Enter the path of the task file to reset.
+    Reset the contents of a task file.
 
-    param file_path_string: Path to the task file in the local file system.
+    :param file_path_string: Path to the task file in the local file system.
+    :param noneditable_sections: If set, only reset non-editable sections.
     """
     if not is_logged_in():
         return
