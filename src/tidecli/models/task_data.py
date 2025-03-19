@@ -108,6 +108,12 @@ class TaskData(BaseModel):
     max_points: float | None = None
     """Maximum points for the task"""
 
+    deadline: str | None = None
+    """ISO8601 date string for the task deadline. Server time is UTC+0, so users of this property will need to account for the local offset."""
+
+    answer_limit: int | None = None
+    """ Maximum number of answers that the user can save in the task."""
+
     def get_default_task_directory(self) -> Path:
         """Return default task directory."""
         return Path(Path(self.path).name) / self.ide_task_id
