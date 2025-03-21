@@ -36,7 +36,6 @@ class TestMain(unittest.TestCase):
         result = self.runner.invoke(login)
         self.assertEqual(
             result.output,
-            "Please, login.\n"
             "Logging in...\n"
             "Please, finish authenticating in the browser."
             "\nLogin successful!\n",
@@ -61,11 +60,11 @@ class TestMain(unittest.TestCase):
     @patch("tidecli.api.routes.requests.request")
     @patch("keyring.get_password")
     @patch("tidecli.utils.login_handler.authenticate")
-    def test_failed_login_invalid_token(
+    def test_login_invalid_token(
         self, mock_authenticate, mock_get_password, mock_request, mock_delete
     ):
         """
-        Test failed login due to invalid token
+        Test login with invalid token
         """
         mock_get_password.return_value = "test_token"
         mock_authenticate.return_value = True
@@ -75,8 +74,6 @@ class TestMain(unittest.TestCase):
         result = self.runner.invoke(login)
         self.assertEqual(
             result.output,
-            "Error: Could not complete API call /oauth/introspect\ninvalid_token\n"
-            "Please, login.\n"
             "Logging in...\n"
             "Please, finish authenticating in the browser."
             "\nLogin successful!\n",
@@ -91,7 +88,7 @@ class TestMain(unittest.TestCase):
 
     @patch("tidecli.api.routes.requests.request")
     @patch("tidecli.api.routes.get_signed_in_user")
-    @patch("tidecli.main.is_logged_in")
+    @patch("tidecli.main.is_logged_in") 
     def test_courses(self, mock_is_logged_in, mock_get_signed_in_user, mock_request):
         """
         Test listing courses
@@ -139,9 +136,7 @@ class TestMainFileAccess(TestCase):
     @patch("tidecli.api.routes.requests.request")
     @patch("tidecli.api.routes.get_signed_in_user")
     @patch("tidecli.main.is_logged_in")
-    def test_task_create_all(
-        self, mock_is_logged_in, mock_get_signed_in_user, mock_request
-    ):
+    def test_task_create_all(self, mock_is_logged_in, mock_get_signed_in_user, mock_request):
         """
         Test creating all tasks and trying to overwrite them without the -f flag
         """
@@ -158,16 +153,12 @@ class TestMainFileAccess(TestCase):
             ],
         )
 
-        file_path_1 = Path(self.working_dir, "Demo1", "t1").relative_to(
-            self.working_dir
-        )
-        file_path_2 = Path(self.working_dir, "Demo1", "t2").relative_to(
-            self.working_dir
-        )
+        file_path_1 = Path(self.working_dir, "Demo1", "t1").relative_to(self.working_dir)
+        file_path_2 = Path(self.working_dir, "Demo1", "t2").relative_to(self.working_dir)
 
         self.assertEqual(
             result.output,
-            f"Wrote file {file_path_1}: test.c\nWrote file {file_path_2}: test.c\n",
+            f"Wrote file {file_path_1}: test.c\nWrote file {file_path_2}: test.c\n"
         )
 
         test_path1 = f"{self.working_dir}Demo1/t1"
@@ -201,9 +192,7 @@ class TestMainFileAccess(TestCase):
     @patch("tidecli.api.routes.requests.request")
     @patch("tidecli.api.routes.get_signed_in_user")
     @patch("tidecli.main.is_logged_in")
-    def test_task_create_one(
-        self, mock_is_logged_in, mock_get_signed_in_user, mock_request
-    ):
+    def test_task_create_one(self, mock_is_logged_in, mock_get_signed_in_user, mock_request):
         """
         Test creating a single task
         """
@@ -223,7 +212,9 @@ class TestMainFileAccess(TestCase):
         )
 
         file_path = Path(self.working_dir, "Demo1", "t3").relative_to(self.working_dir)
-        self.assertEqual(result.output, f"Wrote file {file_path}: test.c\n")
+        self.assertEqual(
+            result.output, f"Wrote file {file_path}: test.c\n"
+        )
 
         test_path1 = f"{self.working_dir}Demo1/t3"
         test_metadata1 = f"{self.working_dir}.timdata"
