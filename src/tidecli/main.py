@@ -58,7 +58,11 @@ def check_login(jsondata: bool) -> None:
     user = login_handler.get_signed_in_user()
     if not is_logged_in(print_errors=False, print_token_info=False) or not user:
         if jsondata:
-            click.echo(json.dumps({"logged_in": None}, ensure_ascii=False, indent=4).encode("utf-8"))
+            click.echo(
+                json.dumps({"logged_in": None}, ensure_ascii=False, indent=4).encode(
+                    "utf-8"
+                )
+            )
         else:
             click.echo("Not logged in.")
         return
@@ -87,7 +91,9 @@ def login(jsondata: bool) -> None:
         return
     if jsondata:
         click.echo(
-            json.dumps(login_handler.login(jsondata=True), ensure_ascii=False, indent=4).encode("utf-8")
+            json.dumps(
+                login_handler.login(jsondata=True), ensure_ascii=False, indent=4
+            ).encode("utf-8")
         )
     else:
         details = login_handler.login()
@@ -123,7 +129,9 @@ def courses(jsondata: bool) -> None:
     if jsondata:
         # Create JSON object list
         courses_json = [course.model_dump() for course in data]
-        click.echo(json.dumps(courses_json, ensure_ascii=False, indent=4).encode("utf-8"))
+        click.echo(
+            json.dumps(courses_json, ensure_ascii=False, indent=4).encode("utf-8")
+        )
 
 
 @click.group()
@@ -298,7 +306,8 @@ def reset(file_path_string: str, noneditable_sections: bool) -> None:
         raise click.ClickException("Invalid task file")
 
     task_file_contents = next(
-        (x.content for x in task_files if Path(x.file_name).name == file_path.name), None
+        (x.content for x in task_files if Path(x.file_name).name == file_path.name),
+        None,
     )
     if task_file_contents is None:
         raise click.ClickException("File is not part of this task")
