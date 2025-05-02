@@ -66,9 +66,7 @@ def create_tasks(
     results = []
 
     for task in combined_tasks:
-        results.append(create_task(
-            task=task, overwrite=overwrite, user_path=user_path
-        ))
+        results.append(create_task(task=task, overwrite=overwrite, user_path=user_path))
     return results
 
 
@@ -147,9 +145,7 @@ def create_task(
     else:
         save_path = Path.cwd()
 
-    saved = save_task_files(
-        task, save_path=save_path, overwrite=overwrite
-    )
+    saved = save_task_files(task, save_path=save_path, overwrite=overwrite)
 
     if not saved:
         return False
@@ -201,9 +197,7 @@ def save_task_file(
     }
 
 
-def save_task_files(
-    task: TaskData, save_path: Path, overwrite: bool = False
-) -> dict:
+def save_task_files(task: TaskData, save_path: Path, overwrite: bool = False) -> dict:
     """
     Save task files in the given path.
 
@@ -219,9 +213,7 @@ def save_task_files(
     for task_file in task_files:
         if task_file.task_directory is not None:
             save_dir = save_path / task_file.task_directory
-        result = save_task_file(
-            task_file, save_dir, overwrite
-        ) 
+        result = save_task_file(task_file, save_dir, overwrite)
         if result:
             results.append(result)
 
