@@ -51,9 +51,8 @@ def write_file(file_path: Path, content: str | bytes) -> None:
 def create_tasks(
     tasks: list[TaskData],
     overwrite: bool,
-    json_output: bool,
     user_path: str | None = None,
-) -> None:
+) -> list[list[dict]]:
     """
     Create multiple tasks.
 
@@ -64,11 +63,13 @@ def create_tasks(
     return: True if tasks are created, False if not
     """
     combined_tasks = combine_tasks(tasks)
+    results = []
 
     for task in combined_tasks:
-        create_task(
-            task=task, overwrite=overwrite, user_path=user_path, json_output=json_output
-        )
+        results.append(create_task(
+            task=task, overwrite=overwrite, user_path=user_path
+        ))
+    return results
 
 
 def combine_tasks(tasks: list[TaskData]) -> list[TaskData]:
@@ -129,8 +130,8 @@ def get_file_content_from_source(source: str) -> bytes | Any:
 
 
 def create_task(
-    task: TaskData, overwrite: bool, json_output: bool, user_path: str | None = None
-) -> bool:
+    task: TaskData, overwrite: bool, user_path: str | None = None
+) -> list[dict] | bool:
     """
     Create a single task.
 
@@ -147,7 +148,7 @@ def create_task(
         save_path = Path.cwd()
 
     saved = save_task_files(
-        task, save_path=save_path, overwrite=overwrite, json_output=json_output
+        task, save_path=save_path, overwrite=overwrite
     )
 
     if not saved:
@@ -159,29 +160,26 @@ def create_task(
 
 
 def save_task_file(
-    task_file: TaskFile | SupplementaryFile,
-    save_path: Path,
-    overwrite: bool = False,
-    json_output: bool = False,
-) -> None:
+    task_file: TaskFile | SupplementaryFile, save_path: Path, overwrite: bool = False
+) -> dict | None:
     """
-    Save task file in the given path.
+    Save task file and return info dict for JSON reporting.
 
     :param task_file: TaskFile object
     :param save_path: Path to save the file
     :param overwrite: Flag if overwrite
-    :param json_output: Flag if output should be in JSON format
     """
 
     file_path = save_path / task_file.file_name
 
-    if file_path.exists():
-        if not overwrite:
-            click.echo(
-                f"File {file_path} already exists\n"
-                f"To overwrite add -f to previous command\n"
-            )
-            return
+    if file_path.exists() and not overwrite:
+        return {
+            "file_name": task_file.file_name,
+            "path": str(file_path),
+            "relative_path": relpath(save_path, Path.cwd()),
+            "status": "skipped",
+        }
+
     file_path.parent.mkdir(parents=True, exist_ok=True)
     if task_file.content is not None:
         with open(file_path, "w", encoding="utf-8") as file:
@@ -195,43 +193,39 @@ def save_task_file(
             file.write(content)
             file.close()
 
-    if json_output:
-        click.echo(
-            json.dumps(
-                {
-                    "file_name": task_file.file_name,
-                    "path": str(file_path),
-                    "status": "written",
-                },
-                indent=2,
-            )
-        )
-    else:
-        relative_path = relpath(save_path, Path.cwd())
-        click.echo(f"Wrote file {relative_path}: {task_file.file_name}")
+    return {
+        "file_name": task_file.file_name,
+        "path": str(file_path),
+        "relative_path": relpath(save_path, Path.cwd()),
+        "status": "written",
+    }
 
 
 def save_task_files(
-    task: TaskData, save_path: Path, json_output: bool, overwrite: bool = False
-) -> bool:
+    task: TaskData, save_path: Path, overwrite: bool = False
+) -> dict:
     """
     Save task files in the given path.
 
     :param task: TaskData object
     :param save_path: Path to save the files
     :param overwrite: Flag if overwrite
-    :return: True if files are saved, False if not
+    :return: list of saved files
     """
-
+    results = []
     task_files = task.task_files + task.supplementary_files
     save_dir = save_path / task.get_task_directory()
 
     for task_file in task_files:
         if task_file.task_directory is not None:
             save_dir = save_path / task_file.task_directory
-        save_task_file(task_file, save_dir, overwrite, json_output=json_output)
+        result = save_task_file(
+            task_file, save_dir, overwrite
+        ) 
+        if result:
+            results.append(result)
 
-    return True
+    return results
 
 
 def write_metadata(folder_path: Path, metadata: TaskData) -> None:
