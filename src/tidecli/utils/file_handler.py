@@ -49,7 +49,10 @@ def write_file(file_path: Path, content: str | bytes) -> None:
 
 
 def create_tasks(
-    tasks: list[TaskData], overwrite: bool, user_path: str | None = None
+    tasks: list[TaskData],
+    overwrite: bool,
+    json_output: bool,
+    user_path: str | None = None,
 ) -> None:
     """
     Create multiple tasks.
@@ -63,7 +66,9 @@ def create_tasks(
     combined_tasks = combine_tasks(tasks)
 
     for task in combined_tasks:
-        create_task(task=task, overwrite=overwrite, user_path=user_path)
+        create_task(
+            task=task, overwrite=overwrite, user_path=user_path, json_output=json_output
+        )
 
 
 def combine_tasks(tasks: list[TaskData]) -> list[TaskData]:
@@ -123,7 +128,9 @@ def get_file_content_from_source(source: str) -> bytes | Any:
             return routes.get_file_content(source, is_tim_file=True)
 
 
-def create_task(task: TaskData, overwrite: bool, user_path: str | None = None) -> bool:
+def create_task(
+    task: TaskData, overwrite: bool, json_output: bool, user_path: str | None = None
+) -> bool:
     """
     Create a single task.
 
@@ -139,7 +146,9 @@ def create_task(task: TaskData, overwrite: bool, user_path: str | None = None) -
     else:
         save_path = Path.cwd()
 
-    saved = save_task_files(task, save_path=save_path, overwrite=overwrite)
+    saved = save_task_files(
+        task, save_path=save_path, overwrite=overwrite, json_output=json_output
+    )
 
     if not saved:
         return False
@@ -150,7 +159,10 @@ def create_task(task: TaskData, overwrite: bool, user_path: str | None = None) -
 
 
 def save_task_file(
-    task_file: TaskFile | SupplementaryFile, save_path: Path, overwrite: bool = False
+    task_file: TaskFile | SupplementaryFile,
+    save_path: Path,
+    overwrite: bool = False,
+    json_output: bool = False,
 ) -> None:
     """
     Save task file in the given path.
@@ -158,7 +170,7 @@ def save_task_file(
     :param task_file: TaskFile object
     :param save_path: Path to save the file
     :param overwrite: Flag if overwrite
-    return: True if file is saved, False if not
+    :param json_output: Flag if output should be in JSON format
     """
 
     file_path = save_path / task_file.file_name
@@ -183,11 +195,25 @@ def save_task_file(
             file.write(content)
             file.close()
 
-    relative_path = relpath(save_path, Path.cwd())
-    click.echo(f"Wrote file {relative_path}: {task_file.file_name}")
+    if json_output:
+        click.echo(
+            json.dumps(
+                {
+                    "file_name": task_file.file_name,
+                    "path": str(file_path),
+                    "status": "written",
+                },
+                indent=2,
+            )
+        )
+    else:
+        relative_path = relpath(save_path, Path.cwd())
+        click.echo(f"Wrote file {relative_path}: {task_file.file_name}")
 
 
-def save_task_files(task: TaskData, save_path: Path, overwrite: bool = False) -> bool:
+def save_task_files(
+    task: TaskData, save_path: Path, json_output: bool, overwrite: bool = False
+) -> bool:
     """
     Save task files in the given path.
 
@@ -203,7 +229,7 @@ def save_task_files(task: TaskData, save_path: Path, overwrite: bool = False) ->
     for task_file in task_files:
         if task_file.task_directory is not None:
             save_dir = save_path / task_file.task_directory
-        save_task_file(task_file, save_dir, overwrite)
+        save_task_file(task_file, save_dir, overwrite, json_output=json_output)
 
     return True
 
