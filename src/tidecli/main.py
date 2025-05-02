@@ -250,7 +250,7 @@ def create(
         tasks: List[TaskData] = get_tasks_by_doc(doc_path=demo_path)
         feedback = create_tasks(tasks=tasks, overwrite=force, user_path=user_dir)
         if json_output:
-            click.echo(feedback)
+            click.echo(json.dumps(feedback, indent=2))
         else:
             for demo in feedback:
                 for task in demo:
@@ -271,7 +271,7 @@ def create(
         )
         feedback = create_task(task=task_data, overwrite=force, user_path=user_dir)
         if json_output:
-            click.echo(feedback)
+            click.echo(json.dumps(feedback, indent=2))
         else:
             for task in feedback:
                 if task["status"] == "written":
