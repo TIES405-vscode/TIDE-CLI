@@ -63,7 +63,7 @@ Step 1.5: Authenticate to TIDE. See [Manual authentication required for running 
 
 Step 2: Navigate to integration test folder `cd tests/integration`
 
-Step 3: Run `poetry run pytest`. If the TIM instance used for tests is not running in localhost, set the correct address to TIM_DOMAIN environmental variable, e.g. `TIM_DOMAIN=192.168.148.69 poetry run pytest`
+Step 3: Run `DEV=true poetry run pytest`. If the TIM instance used for tests is not running in localhost, set the correct address to TIM_DOMAIN environmental variable, e.g. `TIM_DOMAIN=192.168.148.69 poetry run pytest`
 
 ### Current state of integration tests
 
