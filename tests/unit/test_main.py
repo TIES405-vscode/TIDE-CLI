@@ -15,7 +15,7 @@ from unit.test_data import (
     get_tasks_by_course_test_response,
 )
 from unit.test_routes import _create_mock_request
-from tidecli.main import login, logout, courses, task
+from tidecli.main import login, logout, courses, task, course
 from tidecli.models.course import Course
 from tidecli.models.user import User
 
@@ -88,7 +88,7 @@ class TestMain(unittest.TestCase):
 
     @patch("tidecli.api.routes.requests.request")
     @patch("tidecli.api.routes.get_signed_in_user")
-    @patch("tidecli.main.is_logged_in") 
+    @patch("tidecli.main.is_logged_in")
     def test_courses(self, mock_is_logged_in, mock_get_signed_in_user, mock_request):
         """
         Test listing courses
@@ -136,7 +136,9 @@ class TestMainFileAccess(TestCase):
     @patch("tidecli.api.routes.requests.request")
     @patch("tidecli.api.routes.get_signed_in_user")
     @patch("tidecli.main.is_logged_in")
-    def test_task_create_all(self, mock_is_logged_in, mock_get_signed_in_user, mock_request):
+    def test_task_create_all(
+        self, mock_is_logged_in, mock_get_signed_in_user, mock_request
+    ):
         """
         Test creating all tasks and trying to overwrite them without the -f flag
         """
@@ -153,12 +155,16 @@ class TestMainFileAccess(TestCase):
             ],
         )
 
-        file_path_1 = Path(self.working_dir, "Demo1", "t1").relative_to(self.working_dir)
-        file_path_2 = Path(self.working_dir, "Demo1", "t2").relative_to(self.working_dir)
+        file_path_1 = Path(self.working_dir, "Demo1", "t1").relative_to(
+            self.working_dir
+        )
+        file_path_2 = Path(self.working_dir, "Demo1", "t2").relative_to(
+            self.working_dir
+        )
 
         self.assertEqual(
             result.output,
-            f"Wrote file {file_path_1}: test.c\nWrote file {file_path_2}: test.c\n"
+            f"Wrote file {file_path_1}: test.c\nWrote file {file_path_2}: test.c\n",
         )
 
         test_path1 = f"{self.working_dir}Demo1/t1"
@@ -192,7 +198,9 @@ class TestMainFileAccess(TestCase):
     @patch("tidecli.api.routes.requests.request")
     @patch("tidecli.api.routes.get_signed_in_user")
     @patch("tidecli.main.is_logged_in")
-    def test_task_create_one(self, mock_is_logged_in, mock_get_signed_in_user, mock_request):
+    def test_task_create_one(
+        self, mock_is_logged_in, mock_get_signed_in_user, mock_request
+    ):
         """
         Test creating a single task
         """
@@ -212,9 +220,7 @@ class TestMainFileAccess(TestCase):
         )
 
         file_path = Path(self.working_dir, "Demo1", "t3").relative_to(self.working_dir)
-        self.assertEqual(
-            result.output, f"Wrote file {file_path}: test.c\n"
-        )
+        self.assertEqual(result.output, f"Wrote file {file_path}: test.c\n")
 
         test_path1 = f"{self.working_dir}Demo1/t3"
         test_metadata1 = f"{self.working_dir}.timdata"
@@ -240,8 +246,8 @@ class TestMainFileAccess(TestCase):
         )
 
         result = self.runner.invoke(
-            task,
-            ["create-course", "--path", "kurssit/tie/ohj2/2025k/kotisivu"],
+            course,
+            ["create", "--path", "kurssit/tie/ohj2/2025k/kotisivu"],
         )
 
         file_path_1 = Path(self.working_dir, "demo1", "t1").relative_to(

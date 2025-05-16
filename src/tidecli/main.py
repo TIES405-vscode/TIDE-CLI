@@ -176,7 +176,15 @@ def points(doc_path: str, ide_task_id: str, print_json: bool):
         click.echo(points.pretty_print())
 
 
-@task.command(name="create-course")
+@click.group()
+def course() -> None:
+    """
+    Course related commands.
+    """
+    pass
+
+
+@course.command(name="create")
 @click.option(
     "--force",
     "-f",
@@ -194,8 +202,24 @@ def points(doc_path: str, ide_task_id: str, print_json: bool):
     default=None,
     help="Path to a user defined folder for created tasks",
 )
-@click.option("--path", "-p", "course_path", type=str, default=None, required=False)
-@click.option("--id", "-i", "course_id", type=int, default=None, required=False)
+@click.option(
+    "--path",
+    "-p",
+    "course_path",
+    type=str,
+    default=None,
+    required=False,
+    help="Path to the course document",
+)
+@click.option(
+    "--id",
+    "-i",
+    "course_id",
+    type=int,
+    default=None,
+    required=False,
+    help="ID for the course document",
+)
 def create_course(course_path: str, course_id: int, force: bool, user_dir: str) -> None:
     """
     Create all ide tasks from a course.
@@ -204,7 +228,7 @@ def create_course(course_path: str, course_id: int, force: bool, user_dir: str) 
     Course path and ID refer to the document where the paths to ide tasks are defined.
 
     Providing either COURSE_PATH or COURSE_ID is required.
-
+    \f
     :param course_path: Path to the course document
     :param course_id: ID for the course document
     :force: If True, overwrites existing task files
@@ -223,6 +247,9 @@ def create_course(course_path: str, course_id: int, force: bool, user_dir: str) 
         raise click.UsageError(
             "Please provide either course path or course document ID."
         )
+
+
+tim_ide.add_command(course)
 
 
 @task.command()
@@ -264,17 +291,17 @@ def create(
 @click.option(
     "--non-editable-only",
     "-n",
-    "noneditable_sections",
+    "non_editable_only",
     is_flag=True,
     default=False,
 )
 @click.argument("file_path_string", type=str, required=True)
-def reset(file_path_string: str, noneditable_sections: bool) -> None:
+def reset(file_path_string: str, non_editable_only: bool) -> None:
     """
     Reset the contents of a task file.
 
     :param file_path_string: Path to the task file in the local file system.
-    :param noneditable_sections: If set, only reset non-editable sections.
+    :param non_editable_only: If set, resets only the non-editable parts of the task file, preserving user code.
     """
     if not is_logged_in():
         return
@@ -303,7 +330,7 @@ def reset(file_path_string: str, noneditable_sections: bool) -> None:
     if task_file_contents is None:
         raise click.ClickException("File is not part of this task")
 
-    if noneditable_sections:
+    if non_editable_only:
         combined_contents = answer_with_original_noneditable_sections(
             file_contents, task_file_contents
         )
