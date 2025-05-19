@@ -316,9 +316,9 @@ def reset(file_path_string: str, noneditable_sections: bool) -> None:
         combined_contents = answer_with_original_noneditable_sections(
             file_contents, task_file_contents
         )
-        file_path.write_text(encoding="utf-8", combined_contents)
+        file_path.write_text(combined_contents, encoding="utf-8")
     else:
-        file_path.write_text(encoding="utf-8", task_file_contents)
+        file_path.write_text(task_file_contents, encoding="utf-8")
 
 
 @tim_ide.command()
