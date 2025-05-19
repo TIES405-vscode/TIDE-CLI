@@ -12,6 +12,7 @@ __date__ = "10.12.2024"
 import json
 from os import name
 from pathlib import Path
+from os.path import relpath
 from typing import List
 from tidecli.models.tim_feedback import PointsData
 from tidecli.utils import login_handler
@@ -184,7 +185,15 @@ def points(doc_path: str, ide_task_id: str, print_json: bool):
         click.echo(points.pretty_print())
 
 
-@task.command(name="create-course")
+@click.group()
+def course() -> None:
+    """
+    Course related commands.
+    """
+    pass
+
+
+@course.command(name="create")
 @click.option(
     "--force",
     "-f",
@@ -202,8 +211,24 @@ def points(doc_path: str, ide_task_id: str, print_json: bool):
     default=None,
     help="Path to a user defined folder for created tasks",
 )
-@click.option("--path", "-p", "course_path", type=str, default=None, required=False)
-@click.option("--id", "-i", "course_id", type=int, default=None, required=False)
+@click.option(
+    "--path",
+    "-p",
+    "course_path",
+    type=str,
+    default=None,
+    required=False,
+    help="Path to the course document",
+)
+@click.option(
+    "--id",
+    "-i",
+    "course_id",
+    type=int,
+    default=None,
+    required=False,
+    help="ID for the course document",
+)
 def create_course(course_path: str, course_id: int, force: bool, user_dir: str) -> None:
     """
     Create all ide tasks from a course.
@@ -212,7 +237,7 @@ def create_course(course_path: str, course_id: int, force: bool, user_dir: str) 
     Course path and ID refer to the document where the paths to ide tasks are defined.
 
     Providing either COURSE_PATH or COURSE_ID is required.
-
+    \f
     :param course_path: Path to the course document
     :param course_id: ID for the course document
     :force: If True, overwrites existing task files
@@ -233,10 +258,14 @@ def create_course(course_path: str, course_id: int, force: bool, user_dir: str) 
         )
 
 
+tim_ide.add_command(course)
+
+
 @task.command()
 @click.option("--all", "-a", "all_tasks", is_flag=True, default=False)
 @click.option("--force", "-f", "force", is_flag=True, default=False)
 @click.option("--dir", "-d", "user_dir", type=str, default=None)
+@click.option("--json", "-j", "json_output", is_flag=True, default=False)
 @click.argument("demo_path", type=str)
 @click.argument("ide_task_id", type=str, default=None, required=False)
 def create(
@@ -245,6 +274,7 @@ def create(
     all_tasks: bool,
     force: bool,
     user_dir: str,
+    json_output: bool,
 ) -> None:
     """Create tasks based on options."""
     if not is_logged_in():
@@ -253,36 +283,42 @@ def create(
     if all_tasks:
         # Create all tasks
         tasks: List[TaskData] = get_tasks_by_doc(doc_path=demo_path)
-        create_tasks(tasks=tasks, overwrite=force, user_path=user_dir)
+        feedback = create_tasks(tasks=tasks, overwrite=force, user_path=user_dir)
 
     elif ide_task_id:
         # Create a single task
         task_data: TaskData = get_task_by_ide_task_id(
             ide_task_id=ide_task_id, doc_path=demo_path
         )
-        create_task(task=task_data, overwrite=force, user_path=user_dir)
+        # create_task returns a list of task file statuses for a single task.
+        # However, print_task_create_feedback expects a list of task sets (i.e., a list of task file lists).
+        # Therefore, we wrap the result in an outer list: [ ... ]
+        feedback = [create_task(task=task_data, overwrite=force, user_path=user_dir)]
 
     else:
         click.echo(
             "Please provide either --all or an ide_task_id."
         )  # TODO: update this message
+        return
+
+    print_task_create_feedback(feedback, json_output)
 
 
 @task.command()
 @click.option(
     "--non-editable-only",
     "-n",
-    "noneditable_sections",
+    "non_editable_only",
     is_flag=True,
     default=False,
 )
 @click.argument("file_path_string", type=str, required=True)
-def reset(file_path_string: str, noneditable_sections: bool) -> None:
+def reset(file_path_string: str, non_editable_only: bool) -> None:
     """
     Reset the contents of a task file.
 
     :param file_path_string: Path to the task file in the local file system.
-    :param noneditable_sections: If set, only reset non-editable sections.
+    :param non_editable_only: If set, resets only the non-editable parts of the task file, preserving user code.
     """
     if not is_logged_in():
         return
@@ -312,7 +348,7 @@ def reset(file_path_string: str, noneditable_sections: bool) -> None:
     if task_file_contents is None:
         raise click.ClickException("File is not part of this task")
 
-    if noneditable_sections:
+    if non_editable_only:
         combined_contents = answer_with_original_noneditable_sections(
             file_contents, task_file_contents
         )
@@ -364,6 +400,35 @@ def submit(path: str) -> None:
 
 
 tim_ide.add_command(task)
+
+
+def print_task_create_feedback(feedback: list[list[dict]], json_output: bool) -> None:
+    """
+    Print feedback from the task creation process.
+
+    Displays feedback on which files were created or skipped during task generation,
+    either in JSON format or as human-readable text.
+
+    :param feedback: A list of task sets, each being a list of dictionaries
+                     containing task creation results.
+    :param json_output: If True, prints the output in JSON format.
+    """
+
+    if json_output:
+        click.echo(json.dumps(feedback, indent=2).encode("utf-8"))
+    else:
+        for demo in feedback:
+            for task in demo:
+                if task["status"] == "written":
+                    click.echo(
+                        f"Wrote file {task['relative_path']}: {task['file_name']}"
+                    )
+                else:
+                    click.echo(
+                        f"File {task['path']} already exists\n"
+                        f"To overwrite add -f to previous command\n"
+                    )
+
 
 if __name__ == "__main__":
     tim_ide()

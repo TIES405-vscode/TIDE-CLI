@@ -5,7 +5,9 @@ CLIENT_ID = "oauth2_tide"
 # Use DEV for localhost development address
 # For the tim url, use default https://tim.jyu.fi if the user does not supply custom url
 TIM_URL = (
-    "http://localhost" if os.getenv("DEV") else os.getenv("URL", "https://tim.jyu.fi")
+    "http://localhost"
+    if os.getenv("DEV")
+    else os.getenv("TIM_URL", "https://tim.jyu.fi")
 )
 AUTH_ENDPOINT = "/oauth/authorize"
 TOKEN_ENDPOINT = "/oauth/token"

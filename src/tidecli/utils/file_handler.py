@@ -49,8 +49,10 @@ def write_file(file_path: Path, content: str | bytes) -> None:
 
 
 def create_tasks(
-    tasks: list[TaskData], overwrite: bool, user_path: str | None = None
-) -> None:
+    tasks: list[TaskData],
+    overwrite: bool,
+    user_path: str | None = None,
+) -> list[list[dict]]:
     """
     Create multiple tasks.
 
@@ -61,9 +63,11 @@ def create_tasks(
     return: True if tasks are created, False if not
     """
     combined_tasks = combine_tasks(tasks)
+    results = []
 
     for task in combined_tasks:
-        create_task(task=task, overwrite=overwrite, user_path=user_path)
+        results.append(create_task(task=task, overwrite=overwrite, user_path=user_path))
+    return results
 
 
 def combine_tasks(tasks: list[TaskData]) -> list[TaskData]:
@@ -123,7 +127,9 @@ def get_file_content_from_source(source: str) -> bytes | Any:
             return routes.get_file_content(source, is_tim_file=True)
 
 
-def create_task(task: TaskData, overwrite: bool, user_path: str | None = None) -> bool:
+def create_task(
+    task: TaskData, overwrite: bool, user_path: str | None = None
+) -> list[dict] | bool:
     """
     Create a single task.
 
@@ -151,25 +157,30 @@ def create_task(task: TaskData, overwrite: bool, user_path: str | None = None) -
 
 def save_task_file(
     task_file: TaskFile | SupplementaryFile, save_path: Path, overwrite: bool = False
-) -> None:
+) -> dict:
     """
-    Save task file in the given path.
+    Save task file and return info dict for JSON reporting.
 
     :param task_file: TaskFile object
     :param save_path: Path to save the file
     :param overwrite: Flag if overwrite
-    return: True if file is saved, False if not
+    :return: Dictionary with file status information
     """
 
     file_path = save_path / task_file.file_name
 
-    if file_path.exists():
-        if not overwrite:
-            click.echo(
-                f"File {file_path} already exists\n"
-                f"To overwrite add -f to previous command\n"
-            )
-            return
+    if file_path.exists() and not overwrite:
+        file_data = {
+            "file_name": task_file.file_name,
+            "path": str(file_path),
+            "relative_path": relpath(save_path, Path.cwd()),
+            "status": "skipped",
+        }
+        # Add task_id_ext if it exists. Supplementary files do not have it
+        if hasattr(task_file, "task_id_ext"):
+            file_data["task_id_ext"] = task_file.task_id_ext
+        return file_data
+
     file_path.parent.mkdir(parents=True, exist_ok=True)
     if task_file.content is not None:
         with open(file_path, "w", encoding="utf-8") as file:
@@ -183,29 +194,41 @@ def save_task_file(
             file.write(content)
             file.close()
 
-    relative_path = relpath(save_path, Path.cwd())
-    click.echo(f"Wrote file {relative_path}: {task_file.file_name}")
+    file_data = {
+        "file_name": task_file.file_name,
+        "path": str(file_path),
+        "relative_path": relpath(save_path, Path.cwd()),
+        "status": "written",
+    }
+    # Add task_id_ext if it exists. Supplementary files do not have it
+    if hasattr(task_file, "task_id_ext"):
+        file_data["task_id_ext"] = task_file.task_id_ext
+    return file_data
 
 
-def save_task_files(task: TaskData, save_path: Path, overwrite: bool = False) -> bool:
+def save_task_files(
+    task: TaskData, save_path: Path, overwrite: bool = False
+) -> list[dict]:
     """
     Save task files in the given path.
 
     :param task: TaskData object
     :param save_path: Path to save the files
     :param overwrite: Flag if overwrite
-    :return: True if files are saved, False if not
+    :return: list of saved files
     """
-
+    results = []
     task_files = task.task_files + task.supplementary_files
     save_dir = save_path / task.get_task_directory()
 
     for task_file in task_files:
         if task_file.task_directory is not None:
             save_dir = save_path / task_file.task_directory
-        save_task_file(task_file, save_dir, overwrite)
+        result = save_task_file(task_file, save_dir, overwrite)
+        if result:
+            results.append(result)
 
-    return True
+    return results
 
 
 def write_metadata(folder_path: Path, metadata: TaskData) -> None:
